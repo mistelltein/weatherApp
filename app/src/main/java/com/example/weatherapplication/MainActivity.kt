@@ -1,6 +1,5 @@
 package com.example.weatherapplication
 
-import WeatherResponse
 import android.os.Bundle
 import android.text.Html
 import android.view.View
@@ -21,6 +20,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 class MainActivity : AppCompatActivity() {
     private lateinit var cityInput: EditText
@@ -90,12 +90,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun formatWeatherInfo(response: WeatherResponse): String {
         val sdf = SimpleDateFormat("dd MMMM yyyy HH:mm:ss", Locale("ru"))
-        val date = Date(response.dt * 1000)
-        val sunrise = Date(response.sys.sunrise * 1000)
-        val sunset = Date(response.sys.sunset * 1000)
+        sdf.timeZone = TimeZone.getTimeZone("UTC")
+        val utcDate = Date(response.dt * 1000)
+        val timezoneOffsetMillis = response.timezone * 1000
+        val localDate = Date(utcDate.time + timezoneOffsetMillis)
+
+        val sunrise = Date(response.sys.sunrise * 1000 + timezoneOffsetMillis)
+        val sunset = Date(response.sys.sunset * 1000 + timezoneOffsetMillis)
 
         return """
-            <b>${sdf.format(date)}</b>    ${response.name}
+            <b>${sdf.format(localDate)}</b>    ${response.name}
             <br><br>
             ${response.weather[0].main}<br>${response.weather[0].description}
             <br><br>

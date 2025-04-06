@@ -1,3 +1,5 @@
+package com.example.weatherapplication
+
 data class WeatherResponse(
     val name: String,
     val dt: Long,
@@ -5,7 +7,8 @@ data class WeatherResponse(
     val weather: List<Weather>,
     val wind: Wind,
     val clouds: Clouds,
-    val sys: Sys
+    val sys: Sys,
+    val timezone: Long
 )
 
 data class Main(
